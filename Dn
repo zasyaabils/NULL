@@ -1,0 +1,71 @@
+#include <iostream>
+using namespace std;
+
+class StackDinamis {
+private:
+    int top;
+    int size;
+    int *data;       // array dinamis
+
+public:
+    StackDinamis(int ukuran) {
+        size = ukuran;
+        data = new int[size];
+        top = -1;
+    }
+
+    ~StackDinamis() { 
+        delete[] data; 
+    }
+
+    bool penuh() { 
+        return top == size - 1; 
+    }
+
+    bool kosong() { 
+        return top == -1; 
+    }
+
+    void push(int x) {
+        if (penuh()) {
+            cout << "Stack penuh!\n";
+        } else {
+            data[++top] = x;
+            cout << x << " dimasukkan.\n";
+        }
+    }
+
+    void pop() {
+        if (kosong()) {
+            cout << "Stack kosong!\n";
+        } else {
+            cout << data[top--] << " dihapus.\n";
+        }
+    }
+};
+
+int main() {
+    int ukuran;
+    cout << "Masukkan ukuran stack: ";
+    cin >> ukuran;
+
+    StackDinamis s(ukuran);
+    int pilih, nilai;
+
+    do {
+        cout << "\n=== STACK (ARRAY DINAMIS) ===\n";
+        cout << "1. Push\n2. Pop\n3. Keluar\nPilih: ";
+        cin >> pilih;
+
+        if (pilih == 1) {
+            cout << "Masukkan angka: ";
+            cin >> nilai;
+            s.push(nilai);
+        } else if (pilih == 2) {
+            s.pop();
+        }
+
+    } while (pilih != 3);
+
+    return 0;
+}
