@@ -1,0 +1,148 @@
+//no. 
+#include <iostream>
+using namespace std;
+
+// =========================
+// STACK ARRAY STATIS
+// =========================
+class StackStatic {
+private:
+    int data[10];   // kapasitas tetap
+    int top;
+
+public:
+    StackStatic() { top = -1; }
+
+    bool IsEmpty() { return top == -1; }
+    bool IsFull()  { return top == 9; }
+
+    void Push(int x) {
+        if (IsFull()) {
+            cout << "Stack penuh!\n";
+            return;
+        }
+        data[++top] = x;
+    }
+
+    int Pop() {
+        if (IsEmpty()) {
+            cout << "Stack kosong!\n";
+            return -1;
+        }
+        return data[top--];
+    }
+
+    void Display() {
+        if (IsEmpty()) {
+            cout << "(kosong)\n";
+            return;
+        }
+        cout << "TOP -> ";
+        for (int i = top; i >= 0; i--) {
+            cout << data[i] << " ";
+        }
+        cout << "\n";
+    }
+};
+
+// =========================
+// STACK ARRAY DINAMIS
+// =========================
+class StackDynamic {
+private:
+    int *data;      // pointer array dinamis
+    int top;
+    int capacity;
+
+public:
+    StackDynamic(int cap = 5) {
+        capacity = cap;
+        data = new int[capacity];
+        top = -1;
+    }
+
+    ~StackDynamic() {
+        delete[] data;
+    }
+
+    bool IsEmpty() { return top == -1; }
+    bool IsFull()  { return top == capacity - 1; }
+
+    void Push(int x) {
+        if (IsFull()) {
+            // otomatis perbesar kapasitas
+            int newCap = capacity * 2;
+            int *newData = new int[newCap];
+            for (int i = 0; i <= top; i++)
+                newData[i] = data[i];
+
+            delete[] data;
+            data = newData;
+            capacity = newCap;
+        }
+        data[++top] = x;
+    }
+
+    int Pop() {
+        if (IsEmpty()) {
+            cout << "Stack kosong!\n";
+            return -1;
+        }
+        return data[top--];
+    }
+
+    void Display() {
+        if (IsEmpty()) {
+            cout << "(kosong)\n";
+            return;
+        }
+        cout << "TOP -> ";
+        for (int i = top; i >= 0; i--) {
+            cout << data[i] << " ";
+        }
+        cout << "\n";
+    }
+};
+
+// =========================
+// PROGRAM UTAMA
+// =========================
+int main() {
+    int nomor;
+    cout << "Masukkan nomor mahasiswa: ";
+    cin >> nomor;
+
+    if (nomor % 2 != 0) {
+        cout << "\nNomor ganjil -> Menggunakan ARRAY STATIS\n";
+        StackStatic s;
+        s.Push(10);
+        s.Push(20);
+        s.Push(30);
+        cout << "Isi stack: ";
+        s.Display();
+
+        cout << "Pop: " << s.Pop() << endl;
+        cout << "Isi stack setelah pop: ";
+        s.Display();
+    }
+    else {
+        cout << "\nNomor genap -> Menggunakan ARRAY DINAMIS\n";
+        StackDynamic s;
+
+        s.Push(5);
+        s.Push(15);
+        s.Push(25);
+        s.Push(35);
+        s.Push(45);
+        s.Push(55); // memaksa resize
+
+        cout << "Isi stack: ";
+        s.Display();
+
+        cout << "Pop: " << s.Pop() << endl;
+        cout << "Isi stack setelah pop: ";
+        s.Display();
+    }
+
+    return 0;
+}
