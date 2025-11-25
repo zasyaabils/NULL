@@ -1,0 +1,61 @@
+#include <iostream>
+using namespace std;
+
+class StackStatis {
+private:
+    int top;
+    static const int maks = 100; // array statis
+    int data[maks];
+
+public:
+    StackStatis() {
+        top = -1;
+    }
+
+    bool penuh() { 
+        return top == maks - 1; 
+    }
+
+    bool kosong() { 
+        return top == -1; 
+    }
+
+    void push(int x) {
+        if (penuh()) {
+            cout << "Stack penuh!\n";
+        } else {
+            data[++top] = x;
+            cout << x << " dimasukkan.\n";
+        }
+    }
+
+    void pop() {
+        if (kosong()) {
+            cout << "Stack kosong!\n";
+        } else {
+            cout << data[top--] << " dihapus.\n";
+        }
+    }
+};
+
+int main() {
+    StackStatis s;
+    int pilih, nilai;
+
+    do {
+        cout << "\n=== STACK (ARRAY STATIS) ===\n";
+        cout << "1. Push\n2. Pop\n3. Keluar\nPilih: ";
+        cin >> pilih;
+
+        if (pilih == 1) {
+            cout << "Masukkan angka: ";
+            cin >> nilai;
+            s.push(nilai);
+        } else if (pilih == 2) {
+            s.pop();
+        }
+
+    } while (pilih != 3);
+
+    return 0;
+}
