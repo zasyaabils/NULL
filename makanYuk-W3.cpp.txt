@@ -1,0 +1,706 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+class Menu {
+public :
+	void tambahInformasiToko() {
+		system("cls");
+		
+		string namaToko;
+		string alamatToko;
+		string email;
+		string jamOperasional;
+		string deskripsi;
+		string noTelepon;
+		
+		int idToko;
+		
+		cout << "\n-------------------------------------\n";
+        cout << "      TAMBAH INFORMASI TOKO\n";
+        cout << "-------------------------------------\n";
+        cout << "Masukkan ID Toko         : ";
+        cin >> idToko;
+        cin.ignore();
+        cout << "Nama Toko                : ";
+        getline(cin, namaToko);
+        cout << "Alamat Toko              : ";
+        getline(cin, alamatToko);
+        cout << "Email                    : ";
+        getline(cin, email);
+        cout << "No Telepon               : ";
+        getline(cin, noTelepon);
+        cout << "Jam Operasional          : ";
+        getline(cin, jamOperasional);
+        cout << "Deskripsi Toko           : ";
+        getline(cin, deskripsi);
+        
+        ofstream file("toko.txt", ios::trunc);
+        if (!file) {
+            cout << "[!] Gagal membuka file toko.txt\n";
+            return;
+        }
+        
+        // Simpan data toko ke file
+        file << idToko << "|"
+             << namaToko << "|"
+             << alamatToko << "|"
+             << email << "|"
+             << noTelepon << "|"
+             << jamOperasional << "|"
+             << deskripsi << endl;
+
+        file.close();
+        cout << "\n[!] Informasi toko berhasil disimpan ke file toko.txt!\n";
+        // belum dikasih pause 
+        informasiToko();
+	}
+	
+	void editInformasiToko() {
+	    system("cls");
+	
+	    // --- Baca data toko lama ---
+	    ifstream file("toko.txt");
+	    if (!file.is_open()) {
+	        cout << "\n[!] File toko.txt tidak ditemukan atau belum ada data.\n";
+	        return;
+	    }
+	
+	    int idToko;
+	    string namaToko;
+		string alamatToko;
+		string email;
+		string noTelepon;
+		string jamOperasional;
+		string deskripsi;
+	
+	    // Asumsikan 1 toko per file
+	    if (!(file >> idToko)) {
+	        cout << "\n[!] Tidak ada data toko yang bisa diedit.\n";
+	        file.close();
+	        return;
+	    }
+	 
+	    file.ignore(); 
+	    string line;
+	    getline(file, line);
+	    file.close();
+	
+	    size_t pos = 0;
+	    string token;
+	    string data[6];
+	    int i = 0;
+	    
+	    while ((pos = line.find("|")) != string::npos && i < 6) {
+	        token = line.substr(0, pos);
+	        data[i++] = token;
+	        line.erase(0, pos + 1);
+	    }
+	    data[i] = line;
+	
+	    namaToko = data[0];
+	    alamatToko = data[1];
+	    email = data[2];
+	    noTelepon = data[3];
+	    jamOperasional = data[4];
+	    deskripsi = data[5];
+	
+	    // --- Tampilkan data lama ---
+	    cout << "\n-------------------------------------\n";
+	    cout << "        EDIT INFORMASI TOKO\n";
+	    cout << "-------------------------------------\n";
+	    cout << "Data saat ini:\n";
+	    cout << "ID Toko         : " << idToko << endl;
+	    cout << "Nama Toko       : " << namaToko << endl;
+	    cout << "Alamat          : " << alamatToko << endl;
+	    cout << "Email           : " << email << endl;
+	    cout << "No Telepon      : " << noTelepon << endl;
+	    cout << "Jam Operasional : " << jamOperasional << endl;
+	    cout << "Deskripsi       : " << deskripsi << endl;
+	
+	    cout << "\n-------------------------------------\n";
+	    cout << "Masukkan data baru (tekan ENTER untuk biarkan sama)\n";
+	    cout << "-------------------------------------\n";
+	    
+	    string input;
+	    cin.ignore();
+	
+	    cout << "Nama Toko [" << namaToko << "]: ";
+	    getline(cin, input);
+	    if (!input.empty()) namaToko = input;
+	
+	    cout << "Alamat Toko [" << alamatToko << "]: ";
+	    getline(cin, input);
+	    if (!input.empty()) alamatToko = input;
+	
+	    cout << "Email [" << email << "]: ";
+	    getline(cin, input);
+	    if (!input.empty()) email = input;
+	
+	    cout << "No Telepon [" << noTelepon << "]: ";
+	    getline(cin, input);
+	    if (!input.empty()) noTelepon = input;
+	
+	    cout << "Jam Operasional [" << jamOperasional << "]: ";
+	    getline(cin, input);
+	    if (!input.empty()) jamOperasional = input;
+	
+	    cout << "Deskripsi [" << deskripsi << "]: ";
+	    getline(cin, input);
+	    if (!input.empty()) deskripsi = input;
+	
+	    // --- Simpan hasil edit ke file ---
+	    ofstream outFile("toko.txt", ios::trunc);
+	    if (outFile.is_open()) {
+	        outFile << idToko << "|" 
+					<< namaToko << "|" 
+					<< alamatToko << "|" 
+					<< email << "|"
+	                << noTelepon << "|" 
+					<< jamOperasional << "|" 
+					<< deskripsi << endl;
+	        outFile.close();
+	        
+	        cout << "\n[!] Informasi toko berhasil diperbarui!\n";
+	        
+	        //info belum muncul
+	    } else {
+	        cout << "\n[!] Gagal menyimpan perubahan ke file.\n";
+	    }
+	    
+	    informasiToko();
+	}
+
+	void hapusInformasiToko() {
+	    system("cls");
+	    cout << "\n-------------------------------------\n";
+	    cout << "          HAPUS INFORMASI TOKO\n";
+	    cout << "-------------------------------------\n";
+	
+	    ifstream file("toko.txt");
+	    if (!file.is_open()) {
+	        cout << "[!] File toko.txt tidak ditemukan.\n";
+	        return;
+	    }
+	
+	    // Cek apakah file kosong
+	    file.seekg(0, ios::end);
+	    if (file.tellg() == 0) {
+	        cout << "[!] Tidak ada data toko yang bisa dihapus.\n";
+	        file.close();
+	        return;
+	    }
+	    file.close();
+	
+	    char konfirmasi;
+	    cout << "Apakah kamu yakin ingin menghapus semua data toko? (y/n): ";
+	    cin >> konfirmasi;
+	
+	    if (konfirmasi == 'y' || konfirmasi == 'Y') {
+	        // Buka file dengan mode trunc untuk menghapus semua isi
+	        ofstream outFile("toko.txt", ios::trunc);
+	        if (outFile.is_open()) {
+	            outFile.close();
+	            cout << "\n[?] Informasi toko berhasil dihapus.\n";
+	        } else {
+	            cout << "\n[!] Gagal menghapus data toko.\n";
+	        }
+	    } else {
+	        cout << "\n[!] Penghapusan dibatalkan.\n";
+	    }
+	    
+	    //  cout << "\n[?] Informasi toko berhasil dihapus.\n"; belum muncul
+	    informasiToko();
+	}
+	
+	void tampilkanInformasiToko() {
+	    system("cls");
+	    ifstream file("toko.txt");
+	
+	    if (!file.is_open()) {
+	        cout << "\n[!] Tidak ada data toko ditemukan.\n";
+	        cout << "\nTekan Enter untuk kembali...";
+	        cin.ignore();
+	        cin.get();
+	        return;
+	    }
+	
+	    string id;
+		string nama;
+		string alamat;
+		string email;
+		string telp;
+		string jam;
+		string desk;
+	
+	    // Ambil tiap kolom dipisah tanda '|'
+	    getline(file, id, '|');
+	    getline(file, nama, '|');
+	    getline(file, alamat, '|');
+	    getline(file, email, '|');
+	    getline(file, telp, '|');
+	    getline(file, jam, '|');
+	    getline(file, desk);
+	
+	    file.close();
+	
+	    cout << "\n-------------------------------------\n";
+	    cout << "         INFORMASI TOKO ANDA\n";
+	    cout << "-------------------------------------\n";
+	    cout << "ID Toko         : " << id << endl;
+	    cout << "Nama Toko       : " << nama << endl;
+	    cout << "Alamat          : " << alamat << endl;
+	    cout << "Email           : " << email << endl;
+	    cout << "No. Telepon     : " << telp << endl;
+	    cout << "Jam Operasional : " << jam << endl;
+	    cout << "Deskripsi       : " << desk << endl;
+	    cout << "-------------------------------------\n";
+	    
+	    cout << "\n[!] Tekan Enter untuk kembali ke menu Informasi Toko...";
+	    cin.ignore(); 
+	    cin.get(); 
+	    
+	    informasiToko();
+	}
+	
+	void informasiToko() {
+		system("cls");
+                
+        int pilihInformasi;
+		cout << "\n-------------------------------------\n";
+        cout << "          INFORMASI TOKO\n";
+        cout << "-------------------------------------\n";
+        cout << "1. Tambah Informasi Toko\n";
+        cout << "2. Edit Informasi Toko\n";
+        cout << "3. Hapus Informasi Toko\n";
+        cout << "4. Tampilkan Informasi Toko\n";
+        cout << "5. Keluar ke Menu Penjual\n";
+        cout << "-------------------------------------\n";
+        cout << "Pilih menu (1-5): ";
+        cin >> pilihInformasi;
+        cout << "-------------------------------------\n";
+        
+        switch (pilihInformasi) {
+            case 1:
+                tambahInformasiToko();
+                break;
+            case 2:
+                editInformasiToko();
+                break;
+            case 3:
+                hapusInformasiToko();
+                break;
+            case 4:
+                tampilkanInformasiToko();
+                break;
+            case 5:
+                menuPenjual();
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+    	}
+
+	}
+	
+	void tambahMenu() {
+		
+	}
+	
+	void editMenu() {
+		
+	}
+	
+	void hapusMenu() {
+		
+	}
+	
+	void tampilkanMenu() {
+		
+	}
+	
+	void menu() {
+		system("cls");
+		
+		int pilih;
+		cout << "\n-------------------------------------\n";
+        cout << "          UPDATE MENU\n";
+        cout << "-------------------------------------\n";
+        cout << "1. Tambah Menu\n";
+        cout << "2. Edit Menu\n";
+        cout << "3. Hapus Menu\n";
+        cout << "4. Tampilkan Menu\n";
+        cout << "5. Kembali ke Informasi Menu\n";
+        cout << "-------------------------------------\n";
+        cout << "Pilih menu (1-5): ";
+        cin >> pilih;
+        cout << "-------------------------------------\n";
+        
+        switch (pilih) {
+            case 1:
+                tambahMenu();
+                break;
+            case 2:
+                editMenu();
+                break;
+            case 3:
+                hapusMenu();
+                break;
+            case 4:
+                tampilkanMenu();
+                break;
+            case 5:
+                informasiMenu();
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+    	}
+	}
+	
+	void tambahStockMenu() {
+		
+	}
+	
+	void editStockMenu() {
+		
+	}
+	
+	void hapusStockMenu() {
+		
+	}
+	
+	void tampilkanStockMenu() {
+		
+	}
+	
+	void updateStockMenu() {
+		system("cls");
+		
+		int pilih;
+		cout << "\n-------------------------------------\n";
+        cout << "          UPDATE STOCK MENU\n";
+        cout << "-------------------------------------\n";
+        cout << "1. Tambah Stock Menu\n";
+        cout << "2. Edit Stock Menu\n";
+        cout << "3. Hapus Stock Menu\n";
+        cout << "4. Tampilkan Stock Menu\n";
+        cout << "5. Kembali ke Informasi Menu\n";
+        cout << "-------------------------------------\n";
+        cout << "Pilih menu (1-5): ";
+        cin >> pilih;
+        cout << "-------------------------------------\n";
+        
+        switch (pilih) {
+            case 1:
+                tambahStockMenu();
+                break;
+            case 2:
+                editStockMenu();
+                break;
+            case 3:
+                hapusStockMenu();
+                break;
+            case 4:
+                tampilkanStockMenu();
+                break;
+            case 5:
+                informasiStockMenu();
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+    	}
+	}
+	
+	void tambahKategoriMenu() {
+		
+	}
+	
+	void editKategoriMenu() {
+		
+	}
+	
+	void hapusKategoriMenu() {
+		
+	}
+	
+	void tampilkanKategoriMenu() {
+		
+	}
+	
+	void updateKategoriMenu() {
+		system("cls");
+		
+		int pilih;
+		cout << "\n-------------------------------------\n";
+        cout << "         UPDATE KATEGORI MENU\n";
+        cout << "-------------------------------------\n";
+        cout << "1. Tambah Kategori Menu\n";
+        cout << "2. Edit Kategori Menu\n";
+        cout << "3. Hapus Kategori Menu\n";
+        cout << "4. Tampilkan Kategori Menu\n";
+        cout << "5. Kembali ke Informasi Menu\n";
+        cout << "-------------------------------------\n";
+        cout << "Pilih menu (1-5): ";
+        cin >> pilih;
+        cout << "-------------------------------------\n";
+        
+        switch (pilih) {
+            case 1:
+                tambahKategoriMenu();
+                break;
+            case 2:
+                editKategoriMenu();
+                break;
+            case 3:
+                hapusKategoriMenu();
+                break;
+            case 4:
+                tampilkanKategoriMenu();
+                break;
+            case 5:
+                informasiKategoriMenu();
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+    	}
+	}
+	
+	void informasiMenu() {
+		system("cls");
+		
+		int pilihInformasi;
+		cout << "\n-------------------------------------\n";
+        cout << "          INFORMASI MENU\n";
+        cout << "-------------------------------------\n";
+        cout << "1. Update Menu\n";
+        cout << "2. Update Stock Menu\n";
+        cout << "3. Update Kategori Menu\n";
+        cout << "4. Managemen Diskon\n";
+        cout << "5. Searching Menu\n";
+        cout << "6. Sorting Menu\n";
+        cout << "7. Lihat Riwayat Pemesanan\n";
+        cout << "8. Keluar ke Menu Penjual\n";
+        cout << "-------------------------------------\n";
+        cout << "Pilih menu (1-8): ";
+        cin >> pilihInformasi;
+        cout << "-------------------------------------\n";
+        
+        switch (pilihInformasi) {
+            case 1:
+                tambahInformasiToko();
+                break;
+            case 2:
+                updateStockMenu();
+                break;
+            case 3:
+                updateKategoriMenu();
+                break;
+            case 4:
+                tampilkanInformasiToko();
+                break;
+            case 5:
+                menuPenjual();
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+    	}
+	}
+	
+	void menuPenjual() {
+		system("cls");
+		int pilih;
+		cout << "\n-------------------------------------\n";
+        cout << "           MENU PENJUAL\n";
+        cout << "-------------------------------------\n";
+        cout << "1. Informasi Toko\n";
+        cout << "2. Informasi Menu\n";
+        cout << "3. Laporan Penjualan\n";
+        cout << "-------------------------------------\n";
+        cout << "Pilih menu (1-3): ";
+        cin >> pilih;
+        cout << "-------------------------------------\n";
+        
+        switch (pilih) {
+            case 1:
+                informasiToko();
+                break;
+            case 2:
+                informasiMenu();
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+    	}
+	}
+	
+	void menuPembeli() {
+		
+	}
+};
+
+class LoginRegistrasi {
+private :
+	string filename;
+	Menu menuRole;
+
+public:
+	LoginRegistrasi(string file) {
+		filename = file;
+	}
+	
+	void registrasi() {
+		string username;
+		string password;
+		string role;
+		int pilihRole;
+		
+		cout << "\n-------------------------------------\n";
+        cout << "            REGISTER\n";
+        cout << "-------------------------------------\n";
+        cout << "Masukkan username: ";
+        cin >> username;
+        cout << "Masukkan password: ";
+        cin >> password;
+        cout << endl;
+        
+        cout << "\n-------------------------------------\n";
+        cout << "[!] Pilih Role Anda \n";
+        cout << "-------------------------------------\n";
+        cout << "1. Penjual\n";
+        cout << "2. Pembeli\n";
+        cout << "-------------------------------------\n";
+        cout << " Pilih (1/2) : ";
+        cin >> pilihRole;
+        cout << "-------------------------------------\n";
+        
+        switch (pilihRole) {
+            case 1:
+                role = "penjual";
+                break;
+            case 2:
+                role = "pembeli";
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+    	}
+
+        ofstream file(filename, ios::app);
+        file << username << " " 
+			 << password << " " 
+			 << role << endl;
+        file.close();
+
+        cout << "\n[!] Registrasi berhasil!\n";
+	}
+	
+	void login() {
+        string username;
+		string password;
+		string u;
+		string p;
+		string r;
+		string role;
+        int pilihRole;
+        bool ditemukan = false;
+
+        cout << "\n-------------------------------------\n";
+        cout << "            LOGIN\n";
+        cout << "-------------------------------------\n";
+        cout << "Username: ";
+        cin >> username;
+        cout << "Password: ";
+        cin >> password;
+        
+        cout << "\n-------------------------------------\n";
+        cout << "[!] Pilih Role Anda \n";
+        cout << "-------------------------------------\n";
+        cout << "1. Penjual\n";
+        cout << "2. Pembeli\n";
+        cout << "-------------------------------------\n";
+        cout << " Pilih (1/2) : ";
+        cin >> pilihRole;
+        cout << "-------------------------------------\n";
+        
+        switch (pilihRole) {
+            case 1:
+                role = "penjual";
+                break;
+            case 2:
+                role = "pembeli";
+                break;
+            default:
+                cout << "Pilihan tidak valid.\n";
+    	}
+
+        ifstream file(filename);
+        while (file >> u >> p >> r) {
+            if (u == username && p == password && r == role) {
+                ditemukan = true;
+                break;
+            }
+        }
+        file.close();
+
+        if (ditemukan) {
+        	cout << "Login berhasil! Selamat datang, " << username << "! Anda Login sebagai " << role << endl;
+            
+            if (role == "penjual")
+                menuRole.menuPenjual();
+            else
+                menuRole.menuPembeli();
+		} else {
+			cout << "Login gagal. Username atau password tidak sesuai.\n";
+		}
+            
+    }
+    
+    void menu() {
+        int pilihan;
+        
+        do {
+            cout << "\n*******************************************************************************************" << endl;
+	        cout << "*      \\\\////\\\\\\\\//                                                     \\\\////\\\\\\\\//      *" << endl;
+	        cout << "*      //\\\\\\\\////\\\\    //\\\\      //\\\\      //\\\\      //\\\\      //\\\\     //\\\\\\\\////\\\\      *" << endl;
+	        cout << "*      \\\\////\\\\\\\\//    //\\\\      //\\\\      //\\\\      //\\\\      //\\\\     \\\\////\\\\\\\\//      *" << endl;
+	        cout << "*      //\\\\\\\\////\\\\    \\\\//      \\\\//      \\\\//      \\\\//      \\\\//     //\\\\\\\\////\\\\      *" << endl;
+	        cout << "*      \\\\////\\\\\\\\//    \\\\//      \\\\//      \\\\//      \\\\//      \\\\//     \\\\////\\\\\\\\//      *" << endl;
+	        cout << "*      //\\\\\\\\////\\\\                                                     //\\\\\\\\////\\\\      *" << endl;
+	        cout << "*      \\\\////\\\\\\\\//                                                     \\\\////\\\\\\\\//      *" << endl;
+	        cout << "*      //\\\\\\\\////\\\\                                                     //\\\\\\\\////\\\\      *" << endl;
+	        cout << "*******************************************************************************************" << endl;
+	        cout << "@      \\\\//    \\\\//                                                     \\\\//    \\\\//      @" << endl;
+	        cout << "@      //\\\\    //\\\\         W E L C O M E   T O   M a k a n Y u k       //\\\\    //\\\\      @" << endl;
+	        cout << "@      \\\\//    \\\\//             YOUR ONLINE FOOD ORDER APP              \\\\//    \\\\//      @" << endl;
+	        cout << "@      //\\\\    //\\\\                                                     //\\\\    //\\\\      @" << endl;
+	        cout << "===========================================================================================" << endl;
+            cout << "1. Register\n";
+            cout << "2. Login\n";
+            cout << "3. Keluar\n";
+            cout << "===========================================================================================\n";
+            cout << "[!] Silahkan pilih 1 jika Anda belum punya Akun, pilih 2 jika Anda sudah punya Akun :)\n";
+            cout << "===========================================================================================\n";
+            cout << "Masukkan Pilihan Anda : ";
+            cin >> pilihan;
+
+            switch (pilihan) {
+                case 1:
+                    registrasi();
+                    break;
+                case 2:
+                    login();
+                    break;
+                case 3:
+                    cout << "Keluar dari program.\n";
+                    break;
+                default:
+                    cout << "Pilihan tidak valid.\n";
+            }
+        } while (pilihan != 3);
+    }
+};
+
+int main() {
+	LoginRegistrasi logreg("user.txt");
+	logreg.menu();
+	
+	return 0;
+}
